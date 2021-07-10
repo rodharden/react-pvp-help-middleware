@@ -19,6 +19,29 @@ router.get('/', function (req, res, next) {
     });
 })
 
+router.get('/stats/:type', function (req, res, next) {
+  const type = req.params.type
+  const url = 'https://pogoapi.net/api/v1/pokemon_stats.json';
+  fetch(url).then(response => response.json())
+    .then(response => {
+
+      let JSONResult = "["
+      Object.keys(response).map((key) => (
+        JSONResult += "{\"id\":\"" + key + 
+                       "\",\"base_attack\":\"" + response[key].base_attack + 
+                       "\",\"base_defense\":\"" + response[key].base_defense + 
+                       "\",\"base_stamina\":\"" + response[key].base_stamina + 
+                       "\",\"form\":\"" + response[key].form + 
+                       "\",\"pokemon_id\":\"" + response[key].pokemon_id + 
+                       "\"},"
+      ))
+      JSONResult = JSONResult.substring(0, JSONResult.length - 1)
+      JSONResult += "]"
+      response = JSON.parse(JSONResult)
+      return res.json(response)
+    });
+})
+
 router.get('/stats/:type/:id', function (req, res, next) {
   const id = req.params.id
   const type = req.params.type
